@@ -1,0 +1,25 @@
+FROM java:8
+MAINTAINER Benoît Sauvère <benoit.sauvere@gmail.com>
+LABEL version="2.5-RC1"
+
+RUN apt-get update && apt-get install -y maven
+
+
+WORKDIR /tmp
+RUN wget https://github.com/SonarSource/sonar-runner/archive/2.5-RC1.zip -O sonar-runner-2.5-RC1.zip && \
+    unzip sonar-runner-2.5-RC1.zip && \
+    rm sonar-runner-2.5-RC1.zip
+WORKDIR /tmp/sonar-runner-2.5-RC1/
+RUN mvn install -Dsource.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dmaven.test.skip=true
+
+
+WORKDIR /usr/local
+RUN cp /tmp/sonar-runner-2.5-RC1/sonar-runner-cli/target/sonar-runner-2.5-RC1.zip /usr/local/sonar-runner-2.5-RC1.zip
+RUN unzip sonar-runner-2.5-RC1.zip && \
+    rm sonar-runner-2.5-RC1.zip
+
+ENV PATH /usr/local/sonar-runner-2.5-RC1/bin:$PATH
+
+WORKDIR /data
+
+ENTRYPOINT ["sonar-runner"]

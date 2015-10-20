@@ -1,0 +1,25 @@
+FROM java:7
+MAINTAINER Benoît Sauvère <benoit.sauvere@gmail.com>
+LABEL version="2.4"
+
+RUN apt-get update && apt-get install -y maven
+
+
+WORKDIR /tmp
+RUN wget https://github.com/SonarSource/sonar-runner/archive/2.4.zip -O sonar-runner-2.4.zip && \
+    unzip sonar-runner-2.4.zip && \
+    rm sonar-runner-2.4.zip
+WORKDIR /tmp/sonar-runner-2.4/
+RUN mvn install -Dsource.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dmaven.test.skip=true
+
+
+WORKDIR /usr/local
+RUN cp /tmp/sonar-runner-2.4/sonar-runner-dist/target/sonar-runner-2.4.zip /usr/local/sonar-runner-2.4.zip
+RUN unzip sonar-runner-2.4.zip && \
+    rm sonar-runner-2.4.zip
+
+ENV PATH /usr/local/sonar-runner-2.4/bin:$PATH
+
+WORKDIR /data
+
+ENTRYPOINT ["sonar-runner"]
