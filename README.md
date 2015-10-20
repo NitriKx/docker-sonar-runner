@@ -5,7 +5,8 @@ This Docker image includes the Sonar-Runner executable, used to push Code Analys
 ## Pull this image
 
 ```
-docker pull pierrevincent/sonar-runner
+docker pull nitrikx/sonar-runner:2.4
+docker pull nitrikx/sonar-runner:2.5-RC1
 ```
 
 ## Usage
@@ -17,7 +18,7 @@ By default, this image with run the sonar-runner executable inside the /data dir
 You can make your project directory available to the container by sharing a volume when starting the container:
 
 ```
-docker run --rm -v /path/to/your/project:/data pierrevincent/sonar-runner
+docker run --rm -v /path/to/your/project:/data -v /path/to/your/project/sonar-runner.properties:/usr/local/sonar-runner-2.4/conf/sonar-runner.properties nitrikx/sonar-runner:2.4
 ```
 
-You project should contain a sonar-project.properties with the relevant sonar properties (such as Project Key, Name, Version etc.). Note that you can also pass these properties when running the container, e.g. -Dsonar.host.url=http://localhost:9000, this can be useful if you don't want to have user crendentials in your sonar-project.properties.
+You can directly link the sonar-runner.properties file inside the container in order to control the runner configuration. Prefer using the sonar encryption feature to securise your credentials (http://docs.sonarqube.org/display/SONAR/Settings+Encryption).
